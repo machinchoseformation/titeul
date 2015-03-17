@@ -273,7 +273,7 @@ class Actu
      * @param \DateTime $datePublished
      * @return Actu
      */
-    public function setDatePublished(\DateTime $datePublished)
+    public function setDatePublished($datePublished)
     {
         $this->datePublished = $datePublished;
 

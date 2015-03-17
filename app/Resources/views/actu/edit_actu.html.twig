@@ -2,9 +2,10 @@
 
 {# Commentaire twig #}
 {% block title %}
-{{ parent() }} | Modification d'une actu !
+{{ parent() }} | Modif de l'actu !
 {% endblock %}
 
 {% block main_content %}
-    <h1>Modification d'une actu !</h1>
+    <h1>Modif de l'actu !</h1>
+    {{ form( actuForm, {"attr":{"novalidate":"novalidate"}} ) }}
 {% endblock %}

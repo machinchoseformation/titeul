@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * ActuRepository
@@ -13,7 +14,8 @@ use Doctrine\ORM\EntityRepository;
 class ActuRepository extends EntityRepository
 {
 
-	public function findHomeActus(){
+	public function findHomeActus()
+	{
 		$qb = $this->createQueryBuilder("a");
 
 		$query = $qb->where("a.isPublished = 1")
@@ -24,4 +26,20 @@ class ActuRepository extends EntityRepository
 		return $query->getResult();
 	}
 
+
+	public function findPagedActus($page, $numPerPage = 10)
+	{
+		$qb = $this->createQueryBuilder("a");
+
+		$query = $qb->orderBy("a.datePublished", "DESC")
+					->setFirstResult( ($page-1)*$numPerPage )
+					->setMaxResults( $numPerPage )
+					->getQuery();
+
+		$paginator = new Paginator($query);
+		return $paginator;
+
+	}
+
 }
+	
