@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{# Commentaire twig #}
+{% block title %}
+{{ parent() }} | Accueil
+{% endblock %}
+
+{% block main_content %}
+    <h1>Homepage.</h1>
+
+    {% for actu in lastActus %}
+        <h3>{{ actu.title }}</h3>
+        <p class="date">Publié le : {{ actu.datePublished|date('d/m à H:i:s') }}</p>
+        <p>{{ actu.excerpt }}</p>
+    {% endfor %}
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Titeul actus!{% endblock %}</title>
+        {% block stylesheets %}
+        <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" />
+        {% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+        <div class="container">
+
+            <nav>
+                <ul class="nav nav-pills">
+                    <li><a href="{{ path('index') }}" title="Titeul Actus !">Accueil</a></li>
+                    <li><a href="{{ path('about') }}" title="À propos">À propos</a></li>
+                    <li><a href="{{ path('legal') }}" title="Conditions générales de vente">CGV</a></li>
+                </ul>
+            </nav>
+
+            {% for flashMessage in app.session.flashbag.get('success') %}
+                <div class="alert alert-success">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+
+            {% for flashMessage in app.session.flashbag.get('error') %}
+                <div class="alert alert-danger">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+
+            {% block main_content %}{% endblock %}
+
+        </div>
+        {% block javascripts %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+        {% endblock %}
+    </body>
+</html>

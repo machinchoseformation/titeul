@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{# Commentaire twig #}
+{% block title %}
+{{ parent() }} | Nouvelle actu !
+{% endblock %}
+
+{% block main_content %}
+    <h1>Nouvelle actu !</h1>
+    {{ form(actuForm) }}
+{% endblock %}
