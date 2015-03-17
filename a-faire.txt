@@ -1,0 +1,13 @@
+À faire !
+
+Page principale du back-office
+	Affichage de toutes les actualités sous forme de table (Une actualité par ligne)
+		Auprès de chaque actualité : 
+			Un bouton pour effacer (avec confirm() en js)
+			Un bouton pour accéder à la page de modification de cette actu
+		Au-dessus du tableau d'actualité, afficher un bouton menant à la page d'ajout
+
+Ajouter un lien dans le menu principal vers cette nouvelle page du bo
+
+Faire la page de modification d'une actualité 
+Faire en sorte que les boutons "Effacer" fonctionne

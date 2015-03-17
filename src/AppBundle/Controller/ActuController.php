@@ -46,10 +46,8 @@ class ActuController extends Controller
             catch(\Exception $e){
                 $this->addFlash("error", "Un problème est survenu !");
             }
-
-            //flash
-
             //redirect
+            
         }
 
         $params = array(
