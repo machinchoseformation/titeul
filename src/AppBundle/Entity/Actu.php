@@ -3,12 +3,14 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Actu
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="AppBundle\Entity\ActuRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Actu
 {
@@ -24,6 +26,13 @@ class Actu
     /**
      * @var string
      *
+     * @Assert\NotBlank(message="Veuillez renseigner le titre de l'actualité !")
+     * @Assert\Length(
+     *      min = "2",
+     *      max = "255",
+     *      minMessage = "Le titre doit faire au moins {{ limit }} caractères",
+     *      maxMessage = "Le titre ne peut pas être plus long que {{ limit }} caractères"
+     * )
      * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
@@ -31,6 +40,13 @@ class Actu
     /**
      * @var string
      *
+     * @Assert\NotBlank(message="Veuillez renseigner le contenu de l'actualité !")
+     * @Assert\Length(
+     *      min = "20",
+     *      max = "10000",
+     *      minMessage = "Le titre doit faire au moins {{ limit }} caractères",
+     *      maxMessage = "Le titre ne peut pas être plus long que {{ limit }} caractères"
+     * )
      * @ORM\Column(name="content", type="text")
      */
     private $content;
@@ -38,13 +54,20 @@ class Actu
     /**
      * @var string
      *
+     * @Assert\NotBlank(message="Veuillez renseigner le résumé de l'actualité !")
+     * @Assert\Length(
+     *      min = "10",
+     *      max = "500",
+     *      minMessage = "Le titre doit faire au moins {{ limit }} caractères",
+     *      maxMessage = "Le titre ne peut pas être plus long que {{ limit }} caractères"
+     * )
      * @ORM\Column(name="excerpt", type="text")
      */
     private $excerpt;
 
     /**
-     * @var boolean
-     *
+     * @var boolean 
+     * @Assert\Type(type="integer", message="La valeur {{ value }} n'est pas un type {{ type }} valide.")
      * @ORM\Column(name="isPublished", type="boolean")
      */
     private $isPublished;
@@ -66,10 +89,35 @@ class Actu
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="datePublished", type="datetime")
+     * @ORM\Column(name="datePublished", type="datetime", nullable=true)
      */
     private $datePublished;
 
+
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersistCb(){
+        $this->setDateCreated( new \DateTime() );
+        $this->setDateModified( $this->getDateCreated() );
+        if ( $this->getIsPublished() ){
+            $this->setDatePublished( $this->getDateCreated() );
+        }
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function preUpdateCb(){
+        $this->setDateModified( $this->getDateCreated() );
+        if ( $this->getIsPublished() ){
+            $this->setDatePublished( new \DateTime() );
+        }
+        else {
+            $this->setDatePublished(null);
+        }
+    }
 
     /**
      * Get id
@@ -225,7 +273,7 @@ class Actu
      * @param \DateTime $datePublished
      * @return Actu
      */
-    public function setDatePublished($datePublished)
+    public function setDatePublished(\DateTime $datePublished)
     {
         $this->datePublished = $datePublished;
 

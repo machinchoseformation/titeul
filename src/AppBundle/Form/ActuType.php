@@ -15,10 +15,27 @@ class ActuType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title')
-            ->add('content')
-            ->add('excerpt')
-            ->add('isPublished')
+            ->add('title', 'text', array(
+                    "label" => "Titre"
+                ))
+            ->add('content', 'textarea', array(
+                    "label" => "Contenu"
+                ))
+            ->add('excerpt', null, array(
+                    "label" => "Résumé",
+                    "attr" => array(
+                            "class" => "yo"
+                        )
+                ))
+            ->add('isPublished', "choice", array(
+                    "choices" => array(
+                            true => "Publié",
+                            false => "Brouillon"
+                        ),
+                    "multiple" => false,
+                    "expanded" => true,
+                    "label" => "Statut"
+                ))
             ->add('Go', 'submit')
         ;
     }

@@ -23,6 +23,7 @@ class ActuController extends Controller
 
         //nouvelle instance
         $newActu = new Actu();
+        $newActu->setIsPublished(false); //valeur par défaut
 
         //crée une instance de formulaire, associée à notre entité
         $actuForm = $this->createForm(new ActuType(), $newActu);
@@ -33,23 +34,22 @@ class ActuController extends Controller
         //si le form est soumis et valide...
         if ($actuForm->isValid()){
 
-            dump($newActu);
-            die();
-
-            //hydratation
-            $newActu->setTitle( "bla test" );
-            $newActu->setContent( "content content lorem ipsum dolor sit amet." );
-            $newActu->setExcerpt( "excerpt ipsum dolor sit amet." );
-            $newActu->setIsPublished( true );
-            $newActu->setDateCreated( new DateTime() );
-            $newActu->setDateModified( $newActu->getDateCreated() );
-            $newActu->setDatePublished( $newActu->getDateCreated() );
+            //l'hydratation des champs manquants se passe dans l'entité
 
             //doctrine sauvegarde l'entité
-            //dump( $newActu );
             $em = $this->getDoctrine()->getManager();
-            $em->persist( $newActu );
-            $em->flush();
+            try {
+                $em->persist( $newActu );
+                $em->flush();
+                $this->addFlash("success", "Actualité sauvegardée !");
+            }
+            catch(\Exception $e){
+                $this->addFlash("error", "Un problème est survenu !");
+            }
+
+            //flash
+
+            //redirect
         }
 
         $params = array(
