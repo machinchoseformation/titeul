@@ -20,7 +20,7 @@ class ActuController extends Controller
 {
     
     /**
-     * @Route("/actus/{page}", requirements={"page"="\d+"}, defaults={"page" = 1}, name="showAllActus")
+     * @Route("/admin/actus/{page}", requirements={"page"="\d+"}, defaults={"page" = 1}, name="showAllActus")
      */
     public function showAllActusAction($page)
     {
@@ -67,7 +67,9 @@ class ActuController extends Controller
         $commentForm->handleRequest($request);
 
         if ($commentForm->isValid()){
+            $this->denyAccessUnlessGranted('ROLE_USER', null, 'Vous devez être connecté!');
             $newComment->setDateCreated( new DateTime() );
+            $newComment->setAuthor( $this->getUser() );
 
             //crée la relation !
             $newComment->setActu( $actu );
@@ -95,7 +97,7 @@ class ActuController extends Controller
 
 
     /**
-     * @Route("/actus/creation", name="createActu")
+     * @Route("/admin/actus/creation", name="createActu")
      */
     public function createActuAction(Request $request)
     {
@@ -126,6 +128,10 @@ class ActuController extends Controller
                 $newActu->setSlug( $newActu->getSlug() . "-" . uniqid() );
             }
 
+            //auteur
+            $newActu->setAuthor($this->getUser());
+
+
             //doctrine sauvegarde l'entité
             $em = $this->getDoctrine()->getManager();
             try {
@@ -149,7 +155,7 @@ class ActuController extends Controller
 
 
     /**
-     * @Route("/actus/modification/{id}", name="editActu")
+     * @Route("/admin/actus/modification/{id}", name="editActu")
      */
     public function editActuAction(Request $request, $id)
     {
@@ -195,7 +201,7 @@ class ActuController extends Controller
     }
 
     /**
-     * @Route("/actus/suppression/{id}", name="deleteActu")
+     * @Route("/admin/actus/suppression/{id}", name="deleteActu")
      */
     public function deleteActuAction($id)
     {
@@ -214,7 +220,6 @@ class ActuController extends Controller
         $this->addFlash("success", "L'actu a bien été effacée !");
         return $this->redirectToRoute("showAllActus");
     }
-
 
 
     /**

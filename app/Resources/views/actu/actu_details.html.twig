@@ -12,10 +12,14 @@
     <div>
     	<hr />
     	<h3>Faites-vous entendre !</h3>
-    	{{ form(commentForm) }}
+        {% if is_granted("ROLE_USER") %}
+    	   {{ form(commentForm) }}
+        {% else %}
+            <a href="{{ path('login') }}">Connectez-vous pour commenter !</a>
+        {% endif %}
 
     	{% for comment in actu.comments %}
-    		<h6>Écrit le {{ comment.dateCreated|date("d-m-Y à H:i:s") }}</h6>
+    		<h6>Écrit le {{ comment.dateCreated|date("d-m-Y à H:i:s") }} par {{ comment.author.username }}</h6>
     		<p>{{ comment.content }}</p>
     	{% endfor %}
     </div>

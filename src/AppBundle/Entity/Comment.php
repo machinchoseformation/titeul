@@ -41,6 +41,12 @@ class Comment
      */
     private $actu;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
+
 
     /**
      * Get id
@@ -119,5 +125,28 @@ class Comment
     public function getActu()
     {
         return $this->actu;
+    }
+
+    /**
+     * Set author
+     *
+     * @param \AppBundle\Entity\User $author
+     * @return Comment
+     */
+    public function setAuthor(\AppBundle\Entity\User $author)
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * Get author
+     *
+     * @return \AppBundle\Entity\User 
+     */
+    public function getAuthor()
+    {
+        return $this->author;
     }
 }

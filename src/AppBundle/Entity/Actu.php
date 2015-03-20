@@ -107,7 +107,11 @@ class Actu
      */
     private $comments;
 
-
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="actus")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
 
     /**
      * @ORM\PrePersist
@@ -366,5 +370,28 @@ class Actu
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * Set author
+     *
+     * @param \AppBundle\Entity\User $author
+     * @return Actu
+     */
+    public function setAuthor(\AppBundle\Entity\User $author)
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * Get author
+     *
+     * @return \AppBundle\Entity\User 
+     */
+    public function getAuthor()
+    {
+        return $this->author;
     }
 }

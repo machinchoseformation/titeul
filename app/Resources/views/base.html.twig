@@ -17,6 +17,15 @@
                     <li><a href="{{ path('about') }}" title="À propos">À propos</a></li>
                     <li><a href="{{ path('legal') }}" title="Conditions générales de vente">CGV</a></li>
                     <li><a href="{{ path('showAllActus') }}" title="Back-office">BO</a></li>
+
+                {% if app.user %}
+                    <li><a href="{{ path('logout') }}">Déconnexion</a></li>
+                    <li>Bonjour {{ app.user.username }}</li>
+                {% else %}
+                    <li><a href="{{ path('login') }}">Connexion</a></li>
+                    <li><a href="{{ path('register') }}">Inscription</a></li>
+                {% endif %}
+
                 </ul>
             </nav>
 

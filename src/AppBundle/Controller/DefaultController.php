@@ -40,6 +40,4 @@ class DefaultController extends Controller
         return $this->render('default/legal.html.twig');
     }
 
-
-
 }

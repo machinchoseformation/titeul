@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Inscription | {{parent()}}
+{% endblock %}
+
+{% block main_content %}
+	{{ form(registerForm) }}
+{% endblock main_content %}
