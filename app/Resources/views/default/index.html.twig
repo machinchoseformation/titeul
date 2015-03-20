@@ -9,7 +9,7 @@
     <h1>Homepage.</h1>
 
     {% for actu in lastActus %}
-        <h3>{{ actu.title }}</h3>
+        <h3><a href="{{ path('actuDetails', {"slug":actu.slug}) }}">{{ actu.title }}</a></h3>
         <p class="date">Publié le : {{ actu.datePublished|date('d/m à H:i:s') }}</p>
         <p>{{ actu.excerpt }}</p>
     {% endfor %}

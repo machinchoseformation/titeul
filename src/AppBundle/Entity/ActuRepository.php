@@ -14,6 +14,21 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 class ActuRepository extends EntityRepository
 {
 
+	public function findBySlugWithComments($slug){
+		$qb = $this->createQueryBuilder('a');
+		$query = $qb->where("a.slug = :slug")
+					->andWhere("a.isPublished = 1")
+					->leftJoin("a.comments", "c")
+					->addSelect("c")
+					->orderBy("c.dateCreated", "DESC")
+					->setParameter("slug", $slug)
+					->getQuery();
+
+		$result = $query->getOneOrNullResult();
+		return $result;
+	}
+
+
 	public function findHomeActus()
 	{
 		$qb = $this->createQueryBuilder("a");
@@ -40,6 +55,19 @@ class ActuRepository extends EntityRepository
 		return $paginator;
 
 	}
+
+	public function countPublishedActus(){
+
+		$qb = $this->createQueryBuilder("a");
+
+		$query = $qb
+					->select("count(a.id)")
+					->where("a.isPublished = 1")
+					->getQuery();
+
+		return $query->getSingleScalarResult();
+	}
+
 
 }
 	

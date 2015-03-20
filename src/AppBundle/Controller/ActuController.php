@@ -9,14 +9,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use AppBundle\Entity\Actu;
+use AppBundle\Entity\Comment;
 use AppBundle\Form\ActuType;
+use AppBundle\Form\CommentType;
 use \DateTime;
+
+use Cocur\Slugify\Slugify;
 
 class ActuController extends Controller
 {
     
     /**
-     * @Route("/actus/{page}", defaults={"page" = 1}, name="showAllActus")
+     * @Route("/actus/{page}", requirements={"page"="\d+"}, defaults={"page" = 1}, name="showAllActus")
      */
     public function showAllActusAction($page)
     {
@@ -25,18 +29,10 @@ class ActuController extends Controller
         $actuRepo = $this->getDoctrine()->getRepository("AppBundle:Actu");
         $lastActus = $actuRepo->findPagedActus($page, $numPerPage);
 
-        $totalActus     = count($lastActus);
-        $firstShowing   = $numPerPage * ($page - 1) + 1;
-        $lastShowing    = $firstShowing + $numPerPage;
-        if ($lastShowing > $totalActus){
-            $lastShowing = $totalActus;
-        }
-        $hasPrevPage    = ($page > 1) ? true : false;
-        $lastPage       = ceil($totalActus / $numPerPage);
-        $hasNextPage    = ($page < $lastPage) ? true : false;
-
-        $minNumLink     = ($page-5 < 1) ? 1 : $page-5;
-        $maxNumLink     = ($page+5 > $lastPage) ? $lastPage : $page+5;
+        $actuPaginator = $this->get('actu_paginator');
+        $actuPaginator->setDoctrinePaginator($lastActus);
+        $data = $actuPaginator->getPaginationData($numPerPage, $page);
+        extract($data);
 
         $params = array(
             "lastActus"     => $lastActus,
@@ -52,6 +48,49 @@ class ActuController extends Controller
         );
 
         return $this->render('actu/show_all.html.twig', $params);
+    }
+
+
+    /**
+     * @Route("/actu/details/{slug}", requirements={"slug"="^.+-\d{2}-\d{2}-\d{2}(-[0-9a-f]{13})?$"}, name="actuDetails")
+     */
+    public function actuDetailsAction(Request $request, $slug)
+    {
+        $actuRepo = $this->getDoctrine()->getRepository("AppBundle:Actu");
+        $actu = $actuRepo->findBySlugWithComments($slug);
+
+
+        //crée un commentaire pour cette actualité
+        $newComment = new Comment();
+        $commentForm = $this->createForm(new CommentType, $newComment);
+
+        $commentForm->handleRequest($request);
+
+        if ($commentForm->isValid()){
+            $newComment->setDateCreated( new DateTime() );
+
+            //crée la relation !
+            $newComment->setActu( $actu );
+
+            //sauvegarde le comment
+            $em = $this->getDoctrine()->getManager();
+            $em->persist( $newComment );
+            $em->flush();
+
+            return $this->redirectToRoute("actuDetails", array("slug" => $slug));
+        }
+
+        
+        if (!$actu){
+            throw $this->createNotFoundException("Cet article n'existe pas.");
+        }
+
+        $params = array(
+            "actu" => $actu,
+            "commentForm" => $commentForm->createView()
+        );
+
+        return $this->render('actu/actu_details.html.twig', $params);
     }
 
 
@@ -75,6 +114,17 @@ class ActuController extends Controller
         if ($actuForm->isValid()){
 
             //l'hydratation des champs manquants se passe dans l'entité
+            $slug = str_replace(" ", "-", $newActu->getTitle());
+            $slug = strtolower($slug);
+            $slug .= date("-d-m-y");
+            $newActu->setSlug($slug);
+
+            //recherche ce slug en base
+            $actuRepo = $this->getDoctrine()->getRepository("AppBundle:Actu");
+            $foundSlugActu = $actuRepo->findOneBySlug($newActu->getSlug());
+            if ($foundSlugActu){
+                $newActu->setSlug( $newActu->getSlug() . "-" . uniqid() );
+            }
 
             //doctrine sauvegarde l'entité
             $em = $this->getDoctrine()->getManager();
@@ -84,7 +134,7 @@ class ActuController extends Controller
                 $this->addFlash("success", "Actualité sauvegardée !");
             }
             catch(\Exception $e){
-                $this->addFlash("error", "Un problème est survenu !");
+                $this->addFlash("error", "Un problème est survenu !" . $e->getMessage());
             }
             //redirect
 
@@ -164,6 +214,22 @@ class ActuController extends Controller
         $this->addFlash("success", "L'actu a bien été effacée !");
         return $this->redirectToRoute("showAllActus");
     }
+
+
+
+    /**
+     * Appelée depuis twig !!
+     * @Route("/actus/compte", name="countAllActus")
+    */
+    public function countAllActusAction(){
+        
+        $actuRepo = $this->getDoctrine()->getRepository("AppBundle:Actu");
+        $count = $actuRepo->countPublishedActus();
+
+        $params = array(
+            "publishedActusCount" => $count
+        );
+        return $this->render('actu/count_all_actus.html.twig', $params);
+    }
+
 }
-
-

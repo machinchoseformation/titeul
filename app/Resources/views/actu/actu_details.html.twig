@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{# Commentaire twig #}
+{% block title %}
+{{ actu.title }} | {{ parent() }}
+{% endblock %}
+
+{% block main_content %}
+    <h1>{{ actu.title }}</h1>
+    {{ actu.content }}
+
+    <div>
+    	<hr />
+    	<h3>Faites-vous entendre !</h3>
+    	{{ form(commentForm) }}
+
+    	{% for comment in actu.comments %}
+    		<h6>Écrit le {{ comment.dateCreated|date("d-m-Y à H:i:s") }}</h6>
+    		<p>{{ comment.content }}</p>
+    	{% endfor %}
+    </div>
+
+{% endblock %}

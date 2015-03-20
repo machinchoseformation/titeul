@@ -2,11 +2,15 @@
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
 #    parameter_name: value
+    actu_paginator_num_per_page: 2
 
 services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
-    paginator:
-        class: AppBundle\Service\Paginator
-        arguments: ["@request_stack"]
+    test_service:
+        class: AppBundle\Service\TestService
+        arguments: ["@doctrine", "asdf", "%database_name%"]
+    actu_paginator:
+        class: AppBundle\Service\ActuPaginator
+        arguments: ["%actu_paginator_num_per_page%"]
